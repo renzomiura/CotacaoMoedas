@@ -1,0 +1,193 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block head %}
+<style>
+    #id_email{
+        width: 100%;
+        color: #000000;
+        padding: 5px 5px;
+    }
+    #id_date{
+        position: relative;
+        z-index: 100000;
+    }
+    #fig{
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50px;
+        height: 50px;
+     }
+</style>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link rel="stylesheet" href="/resources/demos/style.css" />
+<script>
+$(function() {
+    $( "#id_date" ).datepicker();
+});
+</script>
+
+{% endblock %}
+
+{% block titulo %}
+Home Page Cotacao de Moeda
+{% endblock %}
+
+{% block content %}
+    <header class="min-h-screen bg-white bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-center items-center bg-no-repeat"  style="">
+        <div class="z-10 h-full py-32 md:py-0 text-blue-600 text-center flex items-center flex-col">
+            <h1 class="font-semibold text-4xl md:text-5xl w-10/12 md:w-3/4 text-center">
+                Cotacao de Moeda On Line.
+            </h1>
+            <h3 class="text-xl md:text-xl py-5">
+                Selecione a moeda que você precisa comprar ou vender.
+            </h3>
+            <h4 class="text-sm md:text-lg pb-3">
+                Quer começar? Selecione a moeda e a data.<br><br>
+            </h4>
+
+            <form method="GET">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-5 gap-4">
+                    <div class="col-span-2 ..." id="chartContainer" style="width: 100%; height: 240px;">
+                         <canvas id="myChart" width="400" height="200"></canvas>
+                          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                          <script>
+                          const ctx = document.getElementById('myChart').getContext('2d');
+                          const myChart = new Chart(ctx, {
+                              axisY: {title: "R$"},
+                              type: 'line',
+                              data: {
+                                labels : [{% for item in labels %}"{{ item }}",{% endfor %}],
+                                  datasets: [{
+                                    label: "Grafico Cotacao {{ nomeMoeda|safe }} no Periodo",
+                                    data : [{% for item in values %}{{ item }},{% endfor %}],
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                  }]
+                              },
+                              options: {
+                                  scales: {
+                                      y: {
+                                          beginAtZero: true
+                                      }
+                                  }
+                              }
+                          });
+                          </script>
+                    </div>
+
+
+                    <div class="">
+                        <select name="DropBoxMoeda" class="form-select" style='z-index:8'>
+                          {% for moeda in moedas %}
+                            <option value={{ moeda.codigo}}>{{moeda.nome}}</option>
+                          {% endfor %}
+                        </select>
+                        <br>
+                    </div>
+
+                    <div class="">
+                        <p>Data: <input name='date' type="text" id="id_date"></p>
+                        <br>
+                    </div>
+                    <div class=""> </div>
+
+                </div>
+
+                <div>
+                    <br>
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" style='z-index:8'>Select</button>
+                    <br>
+                </div>
+            </form>
+            <div>
+                <br><br>
+                {% if codigoMoeda == 'AUD' %}
+                <img src= "{% static 'images/moeda-AUS.png' %}" id="fig" alt="auspng" border="0" />
+                {% elif codigoMoeda == 'CAD' %}
+                <img src= "{% static 'images/moeda-CAD.png' %}" id="fig" alt="cadpng" border="0" />
+                {% elif codigoMoeda == 'CHF' %}
+                <img src= "{% static 'images/moeda-CHF.png' %}" id="fig" alt="chfpng" border="0" />
+                {% elif codigoMoeda == 'DKK' %}
+                <img src= "{% static 'images/moeda-DKK.png' %}" id="fig" alt="dkkpng" border="0" />
+                {% elif codigoMoeda == 'EUR' %}
+                <img src= "{% static 'images/moeda-Euro.png' %}" id="fig" alt="europng" border="0" />
+                {% elif codigoMoeda == 'GBP' %}
+                <img src= "{% static 'images/moeda-GBP.png' %}" id="fig" alt="gbppng" border="0" />
+                {% elif codigoMoeda == 'JPY' %}
+                <img src= "{% static 'images/moeda-JPY.png' %}" id="fig" alt="jpypng" border="0" />
+                {% elif codigoMoeda == 'NOK' %}
+                <img src= "{% static 'images/moeda-NOK.png' %}" id="fig" alt="nokpng" border="0" />
+                {% elif codigoMoeda == 'SEK' %}
+                <img src= "{% static 'images/moeda-SEK.png' %}" id="fig" alt="sekpng" border="0" />
+                {% elif codigoMoeda == 'USD' %}
+                <img src= "{% static 'images/moeda-USD.png' %}" id="fig" alt="usdpng" border="0" />
+
+                {% endif %}
+            <p>O valor da cotacao da moeda {{ codigoMoeda|safe }}:{{ nomeMoeda|safe  }} na data {{ d }} eh: R$ {{ valorCotacao|safe }}</p>
+            </div>
+
+            <div>
+                <br>
+                <a href="{% url 'calculadora:calculadora' %}">
+                <button class="" type="submit" >
+                    <img src= "{% static 'images/calculator.png' %}" width="50px" height="50px" alt="buttonpng" border="0" />
+                </button>
+                </a>
+                <br>
+            </div>
+
+        </div>
+    </header>
+
+
+    <section class='flex flex-col md:flex-row items-center border-gray-900 border-b-8' style="min-height: 70vh;">
+        <div class="md:w-1/2 flex flex-col justify-center text-center md:text-left p-5 md:p-10 ">
+            <h2 class="md:text-5xl text-4xl font-semibold mb-4">
+                Procurando dados históricos de Cambio?
+            </h2>
+            <h5 class="md:text-xl text-lg">
+                Nosso conversor de moedas oferece dados histórico confiáveis de 9 de moedas desde o ano 2000 ate os dias atuais.
+                Ideal para profissionais ou pessoas fisicas que desejam verificar, analisar ou gerar relatórios de dados de taxas de câmbio.
+            </h5>
+        </div>
+        <div class='md:w-1/2 flex justify-center items-center'>
+            <img src="{% static 'images/moneyExchange.png' %}" class="w-8/12" alt="">
+        </div>
+    </section>
+
+    <section class='flex flex-col md:flex-row items-center border-gray-900 border-b-8' style="min-height: 70vh;">
+        <div class='md:w-1/2 flex justify-center items-center '>
+            <img src="{% static 'images/exchange.jpeg' %}" class="w-8/12" alt="">
+        </div>
+
+        <div class="md:w-1/2 flex flex-col justify-center text-center md:text-left p-5 md:p-10">
+            <h2 class="md:text-5xl text-4xl font-semibold mb-4">
+                Como usar o nosso sistema de consulta de Cambio.
+            </h2>
+            <h5 class="md:text-xl text-lg">
+                Para utilizar o nosso sistema de consulta de cambio de moeda gratuito, selecione na lista o nome da moeda de interesse, e ao lado defina a data da cotacao que deseja consultar.
+            </h5>
+        </div>
+
+    </section>
+
+     <footer class=" px-5 py-10 ">
+        <ul class="flex justify-between items-center">
+
+            <li>&copy; 2023 </li>
+            <li> Feito com Python (Django)</li>
+            <li>Cotacao de Moedas OnLine</li>
+        </ul>
+
+    </footer>
+
+
+{% endblock %}

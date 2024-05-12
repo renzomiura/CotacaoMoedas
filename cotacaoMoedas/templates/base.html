@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block titulo %}
+        {% endblock %}
+    </title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    {% block head %}
+    $itemGrow: 1.2;
+    $duration: 250ms;
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background-color: #000;
+    }
+
+    h1 {
+      font-family: Arial;
+      color: red;
+      text-align: center;
+    }
+
+    .wrapper {
+      display: grid;
+      grid-template-columns: repeat(3,100%);
+      overflow:hidden;
+      scroll-behavior: smooth;
+
+      section {
+        width: 100%;
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(5, auto);
+        margin: 20px 0;
+
+        .item {
+          padding: 0 2px;
+          transition: $duration all;
+
+          &:hover {
+            margin: 0 40px;
+            transform: scale(1.2);
+          }
+
+        }
+
+        a {
+          position: absolute;
+          color: #fff;
+          text-decoration: none;
+          font-size: 6em;
+          background:rgb(0,0,0);
+          width: 80px;
+          padding: 20px;
+          text-align: center;
+          z-index: 1;
+
+          &:nth-of-type(1) {
+            top:0; bottom:0; left:0;
+            background: linear-gradient(-90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+          }
+          &:nth-of-type(2) {
+            top:0; bottom:0; right: 0;
+            background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+          }
+
+        }
+
+      }
+    }
+
+    // Remove the arrow for Mobile
+    @media only screen and (max-width: 600px) {
+      a.arrow__btn {
+        display:none;
+      }
+    }
+    {% endblock %}
+
+</head>
+
+<body class = "bg-white text-blue-600 font-primary">
+    {% block content %}
+    {% endblock %}
+
+    <script>
+        const nav = document.querySelector('nav')
+
+        document.addEventListener("scroll", e=>{
+            if(scrollY>100){
+                if(scrollY>window.innerHeight){
+                nav.classList.add('invisible')
+            }else{
+                nav.classList.add('bg-gray-900')
+                nav.classList.remove('invisible')
+            }
+            }else{
+                nav.classList.remove('bg-gray-900')
+                nav.classList.remove('invisible')
+            }
+        })
+    </script>
+
+   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+</body>
+</html>
