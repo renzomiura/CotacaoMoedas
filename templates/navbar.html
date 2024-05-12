@@ -1,0 +1,43 @@
+{% load static %}
+
+<nav class = "w-full flex justify-between items-center py-3 px-4 fixed z-50">
+    <div class = "w-3/12">
+        <a href="/">
+            <img class="w-5/12" src= "{% static 'images/Logo.png' %}" >
+        </a>
+    </div>
+
+    <div class = "w-6/12 flex flex-nowrap justify-end">
+        {% if user.is_authenticated %}
+        <div class = "mr-2">
+            <form method="get" action="{% url 'moeda:homepage' %}">
+                <input type="text" class="px-2 py-1 rounded-md text-black" name="query" value="{{ request.GET.query }} " placeholder="Pesquisar">
+                <input type="submit" value="">
+            </form>
+        </div>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        <div class = "mr-2">
+            <a href="{% url 'moeda:homepage' %}">
+                <button class="bg-red-600 rounded-md text-white px-2 py-1"> Sair </button>
+            </a>
+        </div>
+        {% else %}
+        <div class = "mr-2">
+            <a href="{% url 'moeda:homepage' %}">
+                <button class="bg-red-600 rounded-md text-white px-2 py-1"> Login </button>
+            </a>
+        </div>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        <div class = "mr-2">
+            <a href="{% url 'moeda:homepage' request.user.pk %}">
+                <button class="bg-red-600 rounded-md  text-white px-2 py-1"> Editar Perfil </button>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+</nav>
